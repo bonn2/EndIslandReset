@@ -1,6 +1,12 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id 'java'
+    id 'io.github.goooler.shadow' version '8.1.8'
 }
+
+apply plugin: 'io.github.goooler.shadow'
+apply plugin: 'java'
 
 group = 'net.bonn2.pheonixcities'
 version = '1.0.0'
@@ -19,10 +25,15 @@ repositories {
         name = "jitpack"
         url = "https://jitpack.io"
     }
+    maven {
+        name = "essentialsx"
+        url = "https://repo.essentialsx.net/snapshots/"
+    }
 }
 
 dependencies {
     compileOnly "io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT"
+    compileOnly "net.essentialsx:2.21.0-SNAPSHOT"
     implementation 'com.github.Exlll.configlib:configlib-paper:4.5.0'
 }
 
@@ -51,4 +62,18 @@ processResources {
     filesMatching('plugin.yml') {
         expand props
     }
+}
+
+tasks.named('shadowJar', ShadowJar) {
+    enableRelocation true
+    relocationPrefix "shadow"
+    minimize()
+}
+
+shadowJar {
+    archiveClassifier.set('')
+}
+
+tasks.named('build') {
+    dependsOn shadowJar
 }
