@@ -16,9 +16,7 @@ public class OnJoin implements Listener {
     public void onJoin(@NotNull PlayerJoinEvent event) {
         // If player logged out before the last end reset, is in the end, and is past the safe distance in
         // the x or z coordinate, teleport them to the safe location in the config
-        System.out.println("1");
         if (!EndIslandReset.instance.logins.loggedIn.contains(event.getPlayer().getUniqueId())) {
-            System.out.println("2");
             // Add player to the logged in registry and save it
             EndIslandReset.instance.logins.loggedIn.add(event.getPlayer().getUniqueId());
             YamlConfigurations.save(EndIslandReset.instance.loginsFile, LoginLogger.class, EndIslandReset.instance.logins);
@@ -26,7 +24,6 @@ public class OnJoin implements Listener {
             if (event.getPlayer().getWorld().getName().equals(EndIslandReset.instance.config.endFolderName)
                     && (Math.abs(event.getPlayer().getLocation().getBlockX()) >= EndIslandReset.instance.config.safeDistance
                     || Math.abs(event.getPlayer().getLocation().getBlockZ()) >= EndIslandReset.instance.config.safeDistance)) {
-                System.out.println("3");
                 Location safeLocation = EndIslandReset.instance.config.safeLocation.clone();
                 safeLocation.setWorld(Bukkit.getWorld(EndIslandReset.instance.config.safeLocationWorld));
                 event.getPlayer().teleport(safeLocation);
