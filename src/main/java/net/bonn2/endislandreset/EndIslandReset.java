@@ -7,6 +7,7 @@ import de.exlll.configlib.YamlConfigurations;
 import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import net.bonn2.endislandreset.config.Config;
+import net.bonn2.endislandreset.config.LoginLogger;
 import net.bonn2.endislandreset.listeners.OnJoin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -14,8 +15,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.*;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Random;
 import java.util.stream.Stream;
@@ -23,29 +24,38 @@ import java.util.stream.Stream;
 public final class EndIslandReset extends JavaPlugin {
 
     public static EndIslandReset instance;
+
+    public final Path configFile = new File(getDataFolder(), "config.yml").toPath();
+    public final YamlConfigurationProperties configProperties = ConfigLib.BUKKIT_DEFAULT_PROPERTIES.toBuilder()
+            .header(
+                    """
+                    Config for EndIslandReset
+                    by bonn2
+                    """
+            )
+            .setNameFormatter(NameFormatters.UPPER_UNDERSCORE)
+            .setFieldFilter(field -> !field.getName().startsWith("internal"))
+            .build();
     public Config config;
+
+    public final Path loginsFile = new File(getDataFolder(), "logins.yml").toPath();
+    public LoginLogger logins;
 
     @Override
     public void onEnable() {
         instance = this;
+
         // Load the config
-        YamlConfigurationProperties properties = ConfigLib.BUKKIT_DEFAULT_PROPERTIES.toBuilder()
-                .header(
-                        """
-                        Config for EndIslandReset
-                        by bonn2
-                        """
-                )
-                .setNameFormatter(NameFormatters.UPPER_UNDERSCORE)
-                .setFieldFilter(field -> !field.getName().startsWith("internal"))
-                .build();
-
-        Path configFile = new File(getDataFolder(), "config.yml").toPath();
-
         config = YamlConfigurations.update(
                 configFile,
                 Config.class,
-                properties
+                configProperties
+        );
+
+        // Load logins data
+        logins = YamlConfigurations.update(
+                loginsFile,
+                LoginLogger.class
         );
 
         // Register listeners
@@ -54,7 +64,6 @@ public final class EndIslandReset extends JavaPlugin {
         // Check if there should be a reset or not
         try {
             checkForReset();
-            YamlConfigurations.save(configFile, Config.class, config, properties);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -128,7 +137,13 @@ public final class EndIslandReset extends JavaPlugin {
                 nbt.writeCompound(new FileOutputStream(Path.of(config.endFolderName, "level.dat").toFile()));
             }
 
-            config.lastEndReset = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+            // Set the last end reset time to now
+            config.lastEndReset = Instant.now().toEpochMilli() / 1000;
+            // Clear the login registry
+            logins.loggedIn = new ArrayList<>();
+            // Save the config files
+            YamlConfigurations.save(configFile, Config.class, config, configProperties);
+            YamlConfigurations.save(loginsFile, LoginLogger.class, logins);
         }
     }
 }

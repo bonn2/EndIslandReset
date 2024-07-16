@@ -4,6 +4,7 @@ import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -24,6 +25,9 @@ public class Config {
 
     @Comment("Where to teleport players that logged out in regions that were reset.")
     public Location safeLocation = new Location(Bukkit.getWorld("world_the_end"), 0, 100, 0);
+
+    @Comment("The world where SAFE_LOCATION is located.")
+    public String safeLocationWorld = "world_the_end";
 
     @Comment("The distance from 0,0 that a player needs to be to be teleported to the safe location")
     public int safeDistance = 511;
