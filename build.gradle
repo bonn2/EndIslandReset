@@ -25,10 +25,15 @@ repositories {
         name = "jitpack"
         url = "https://jitpack.io"
     }
+    maven {
+        name = "codemc"
+        url = "https://repo.codemc.io/repository/maven-public/"
+    }
 }
 
 dependencies {
     compileOnly "io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT"
+    compileOnly "de.tr7zw:item-nbt-api-plugin:2.13.1"
     implementation 'com.github.Exlll.configlib:configlib-paper:4.5.0'
 }
 

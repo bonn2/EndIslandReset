@@ -4,4 +4,5 @@ main: net.bonn2.endislandreset.EndIslandReset
 api-version: '1.21'
 load: STARTUP
 authors: [bonn2]
+depend: [NBTAPI]
 description: Resets the outer end islands on a set interval
