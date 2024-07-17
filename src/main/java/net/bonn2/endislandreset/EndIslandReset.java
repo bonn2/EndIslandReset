@@ -10,6 +10,7 @@ import net.bonn2.endislandreset.commands.StatusCommand;
 import net.bonn2.endislandreset.config.Config;
 import net.bonn2.endislandreset.config.LoginLogger;
 import net.bonn2.endislandreset.listeners.OnJoin;
+import net.bonn2.endislandreset.listeners.OnServerReady;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -82,14 +83,16 @@ public final class EndIslandReset extends JavaPlugin {
 
     private void checkForReset() throws IOException {
         LocalDateTime lastReset = LocalDateTime.ofEpochSecond(config.lastEndReset, 0, ZoneOffset.UTC);
-        if (config.timeUnit.between(lastReset, LocalDateTime.now()) >= config.timeBetweenResets) {
+        if (config.timeUnit.between(lastReset, LocalDateTime.now(ZoneOffset.UTC)) >= config.timeBetweenResets) {
             // It is time for a reset
             getLogger().info(config.timeBetweenResets + " " + config.timeUnit + " have elapsed since last reset! Resetting end...");
-            getLogger().info("Clearing previous end backup...");
-            Stream<Path> files = Files.walk(Paths.get(config.endFolderName, "old"));
-            files.sorted(Comparator.reverseOrder())
-                    .map(Path::toFile)
-                    .forEach(File::delete);
+            if (Paths.get(config.endFolderName, "old").toFile().exists()) {
+                getLogger().info("Clearing previous end backup...");
+                Stream<Path> files = Files.walk(Paths.get(config.endFolderName, "old"));
+                files.sorted(Comparator.reverseOrder())
+                        .map(Path::toFile)
+                        .forEach(File::delete);
+            }
             getLogger().info("Moving old end region files...");
             Files.createDirectories(Path.of(config.endFolderName, "old", "region"));
             for (String file : Path.of(config.endFolderName, "DIM1", "region").toFile().list()) {
@@ -150,6 +153,8 @@ public final class EndIslandReset extends JavaPlugin {
             // Save the config files
             YamlConfigurations.save(configFile, Config.class, config, configProperties);
             YamlConfigurations.save(loginsFile, LoginLogger.class, logins);
+            // Register onReady event
+            getServer().getPluginManager().registerEvents(new OnServerReady(), this);
         }
     }
 }

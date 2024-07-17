@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
@@ -33,6 +34,11 @@ public class Config {
 
     @Comment("Should the seed be randomized every reset.")
     public boolean seedRandomization = true;
+
+    @Comment("A list of commands that are ran in series after the end is reset. " +
+            "This is intended to be used to activate a pregen plugin." +
+            "Commands are ran after ServerLoadEvent")
+    public List<String> postResetCommands = new ArrayList<>();
 
     @Comment("The last time the end was reset. Warning: You should not need to change this unless you are trying to force the end to reset on the next reboot.")
     public long lastEndReset = 0;
