@@ -6,3 +6,7 @@ load: STARTUP
 authors: [bonn2]
 depend: [NBTAPI]
 description: Resets the outer end islands on a set interval
+commands:
+  endreset:
+    description: Check the status of the end reset.
+    permission: endislandreset.status

@@ -6,6 +6,7 @@ import de.exlll.configlib.YamlConfigurationProperties;
 import de.exlll.configlib.YamlConfigurations;
 import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
+import net.bonn2.endislandreset.commands.StatusCommand;
 import net.bonn2.endislandreset.config.Config;
 import net.bonn2.endislandreset.config.LoginLogger;
 import net.bonn2.endislandreset.listeners.OnJoin;
@@ -18,6 +19,7 @@ import java.nio.file.*;
 import java.time.*;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Stream;
 
@@ -60,6 +62,10 @@ public final class EndIslandReset extends JavaPlugin {
 
         // Register listeners
         getServer().getPluginManager().registerEvents(new OnJoin(), this);
+
+        // Register Commands
+        Objects.requireNonNull(getCommand("endreset")).setExecutor(new StatusCommand());
+        Objects.requireNonNull(getCommand("endreset")).setTabCompleter(new StatusCommand());
 
         // Check if there should be a reset or not
         try {
