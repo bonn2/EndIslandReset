@@ -9,7 +9,7 @@ apply plugin: 'io.github.goooler.shadow'
 apply plugin: 'java'
 
 group = 'net.bonn2.endislandreset'
-version = '1.0.0'
+version = '1.0.1'
 
 repositories {
     mavenCentral()
